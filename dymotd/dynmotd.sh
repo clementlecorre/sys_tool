@@ -27,7 +27,7 @@ USERGROUP="Regular User"
 else
 USERGROUP="$GROUPZ"
 fi
-/usr/games/cowsay  $(fortune /usr/game/fortune-fr/data/informatique)
+/usr/games/cowsay  $(usr/games/fortune /usr/game/fortune-fr/data/informatique)
 toilet -f mono12 -F metal $(hostname) 
 echo -e "\033[1;32m 
 \033[0;35m+++++++++++++++++: \033[0;37mSystem Data\033[0;35m :+++++++++++++++++++
