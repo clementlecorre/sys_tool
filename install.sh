@@ -24,7 +24,7 @@ then
 echo "secondif"
 installdir=$dirinput
 fi
-cp bashrc/bashrc /root/.bashrc
+cp bashrc/bashrc /etc/bash.bashrc
 
 mkdir $installdir
 cp dymotd/dynmotd.sh $installdir/dynmotd.sh

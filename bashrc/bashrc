@@ -29,11 +29,6 @@ else
   PS1="\[\e[00;31m\][\T][\u@\h][\w]{\$?}\$ \[\e[0m\]"
 fi
 
-#for fun :)
-
-if [ -x /usr/games/fortune ]; then
-    /usr/games/fortune /usr/games/fortune-fr/data/informatique     # Makes our day a bit more fun.... :-)
-fi
 #History Size
 HISTSIZE=10000
 HISTFILESIZE=50000
@@ -77,7 +72,7 @@ alias clean_images="for image in \$(docker images -qa); do docker rmi \${image};
 alias less='less -R'
 alias nano='vim'
 alias v='vim'
-alias cc='clear'
+alias cc='clear && /usr/games/fortune /usr/games/fortunes-fr/data/informatique '
 
 # Definition de la fonction bak() permettant de creer une copie
 # de sauvegarde d'un fichier avant de le modifier
