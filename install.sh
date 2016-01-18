@@ -38,7 +38,7 @@ $installdir/update-checker.sh
 echo " " > /etc/motd
 echo "$installdir/dynmotd.sh" >> /etc/profile
 apt-get update && apt-get install toilet cowsay screen fortune make
-cd /usr/game/ && wget https://www.fortunes-fr.org/fortunes-fr/fortunes-fr-0.02.tar.gz && tar xzvf fortunes-fr-0.02.tar.gz && rm fortunes-fr-0.02.tar.gz
+cd /usr/games/ && wget https://www.fortunes-fr.org/fortunes-fr/fortunes-fr-0.02.tar.gz && tar xzvf fortunes-fr-0.02.tar.gz && rm fortunes-fr-0.02.tar.gz
 mv fortunes-fr-0.02 fortunes-fr
 cd fortunes-fr && ./configure && make && make install
 cd
