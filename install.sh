@@ -27,9 +27,9 @@ fi
 cp bashrc/bashrc /root/.bashrc
 
 mkdir $installdir
-cp motd/dynmotd.sh $installdir/dynmotd.sh
+cp dymotd/dynmotd.sh $installdir/dynmotd.sh
 chmod 755 $installdir/dynmotd.sh
-cp motd/update-checker.sh $installdir/update-checker.sh
+cp dymotd/update-checker.sh $installdir/update-checker.sh
 chmod 755 $installdir/update-checker.sh
 touch $installdir/updates-available
 chmod 755 $installdir/updates-available
