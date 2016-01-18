@@ -1,0 +1,179 @@
+#============================================================================
+#title          :.bashrc
+#description    :The ~/.bashrc file determines the behavior of interactive shells.
+#author         :cl3m3nt
+#date           :2016-01-18
+#version        :1.0    
+#notes          :       
+#bash_version   :4.2.37(1)-release
+#OS_version     :Debian GNU/Linux 7.9 (wheezy)
+#============================================================================
+
+# Colorisation des resultats de la commande LS
+export LS_OPTIONS='--color=auto'
+
+# Activation support 256 couleurs pour xterm
+if [ -e /lib/terminfo/x/xterm-256color ]; then
+  export TERM='xterm-256color'
+else
+  export TERM='xterm-color'
+fi
+
+# Adapter le prompt en fonction des permissions de l'utilisateur
+if [[ $(id -u) != 0 ]]
+then
+  #  Custom prompt
+  PS1="\[\e[00;36m\][\T][\u@\h][\w]{\$?}\\$ \[\e[0m\]"
+else
+  # Custom prompt
+  PS1="\[\e[00;31m\][[\T]\u@\h][\w]{\$?}\$ \[\e[0m\]"
+fi
+
+#for fun :)
+
+if [ -x /usr/games/fortune ]; then
+    /usr/games/fortune /usr/games/fortune-fr/data/informatique     # Makes our day a bit more fun.... :-)
+fi
+#History Size
+HISTSIZE=10000
+HISTFILESIZE=50000
+
+# Active l'horodatage des commandes dans l'historique de bash
+HISTTIMEFORMAT='%F %T - ' # %F => %Y - %m - %d + %T => ( %H : %M : %S )
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# Verifier la taille de la fenetre apres chaque commande et, si nécessaire,
+# mettre a jour les valeurs des lignes et des colonnes
+shopt -s checkwinsize
+
+# Activation de l'autocompletion bash
+if [ -f /etc/bash_completion ]; then
+  . /etc/bash_completion
+fi
+
+# Definition de l'editor de l'environnement
+export EDITOR="vim"
+
+# Activation du mode VI de bash
+set -o vi
+
+# Alias 
+alias l='ls -alS $LS_OPTIONS'
+alias maj='apt-get update && apt-get upgrade && apt-get dist-upgrade'
+alias clean='apt-get autoremove && apt-get autoclean'
+alias pg='ps aux | grep $GREP_OPTIONS'
+alias k='cd ..'
+alias kk='cd ../..'
+alias kl='cd ..; ls -al $LS_OPTIONS'
+alias dc='cd'
+alias cd..='cd ..'
+alias grep='grep --color=always'
+alias grpe='/bin/grep --color=always'
+alias check_package="dpkg -l | grep -e '^rc' | awk '{print \$2}'"
+alias clean_containers="for container in \$(docker ps -qa); do docker rm \${container}; done"
+alias clean_images="for image in \$(docker images -qa); do docker rmi \${image}; done"
+alias less='less -R'
+alias nano='vim'
+alias v='vim'
+alias cc='clear'
+
+# Definition de la fonction bak() permettant de creer une copie
+# de sauvegarde d'un fichier avant de le modifier
+function bak(){
+if [[ -z ${1} ]]
+then
+  echo "La fonction bak() necessite un argument !"
+  echo "Exemple d'utilisation : bak mon_super_fichier_sauvegarder"
+else
+  cp "${1}" "${1}_origin_$(date +%Y-%m-%d_%H-%M-%S)"
+  if [[ $? -ne 0 ]]
+  then
+    echo "Fuuck ! la sauvegarde de <"${1}"> ne s'est pas déroulée correctement !"
+  fi
+fi
+}
+# Export de la fonction bak pour permettre son utilisation
+export -f bak
+
+function header () {
+os=$(lsb_release -ds)
+day=$(date +%Y-%m-%d)
+div=======================================
+
+/usr/bin/clear
+
+
+    # Get the user input.
+    printf "Enter a title: " ; read -r title
+
+    # Remove the spaces from the title if necessary.
+    title=${title// /_}
+
+    # Convert uppercase to lowercase.
+    title=${title,,}
+
+    # Add .sh to the end of the title if it is not there already.
+    [ "${title: -3}" != '.sh' ] && title=${title}.sh
+
+    # Check to see if the file exists already.
+    if [ -e $title ] ; then 
+        printf "\n%s\n%s\n\n" "The script \"$title\" already exists." \
+        "Please select another title."
+        exit 1
+    fi
+
+
+printf "Enter a description: " ; read -r dscrpt
+printf "Enter your name [cl3m3nt] : " ; read -r name
+if [ -z "$name" ] # note the quoted test strings
+then
+  name=cl3m3nt
+fi
+printf "Enter the version number [1.0] : " ; read -r vnum
+if [ -z "$vnum" ] # note the quoted test strings
+then
+  vnum=1.0
+fi
+
+
+# Format the output and write it to a file.
+printf "%-16s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%-16s%-8s\n\
+%s\n\n\n" '#!/bin/bash -' '#title' ":$title" '#description' \
+":${dscrpt}" '#author' ":$name" '#date' ":$day" '#version' \
+":$vnum" '#usage' ":./$title" '#notes' ':' '#bash_version' \
+":${BASH_VERSION}" '#OS_version' ":$os" \#$div${div} > $title
+
+# Make the file executable.
+chmod +x $title
+
+
+    # Select between Vim or Emacs.
+    printf "%s\n%s\n%s\n\n" "Select an editor." "1 for Vim." "2 for Emacs."
+    read -r editor
+
+    # Open the file with the cursor on the twelth line.
+    case $editor in
+        1) vim +12 $title
+            ;;
+        2) emacs +12 $title &
+            ;;
+        *) /usr/bin/clear
+           printf "%s\n%s\n\n" "I did not understand your selection." \
+               "Exit..."
+            exit 1
+            ;;
+    esac
+}
+# Export de la fonction header pour permettre son utilisation
+export -f header
