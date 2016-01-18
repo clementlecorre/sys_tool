@@ -10,7 +10,7 @@
 #OS_version     :Debian GNU/Linux 7.9 (wheezy)
 #============================================================================
 
-echo -ne "\033[0;32mPlease input installation directory > \033[1;37m"
+echo -ne "\033[0;32mPlease input installation directory [/etc/dynmotd]> \033[1;37m"
 read dirinput
 inpsize=${#dirinput}
 
