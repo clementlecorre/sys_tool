@@ -13,6 +13,7 @@ Clone the github repository
 git clone https://github.com/cl3m3nt666/sys_tool.git
 ```
 Run the 'installation' script
+
 ```bash
 cd sys_tool
 sudo ./install.sh
