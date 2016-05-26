@@ -3,8 +3,8 @@
 #description    :The ~/.bashrc file determines the behavior of interactive shells.
 #author         :cl3m3nt
 #date           :2016-01-18
-#version        :1.0    
-#notes          :       
+#version        :1.0
+#notes          :
 #bash_version   :4.2.37(1)-release
 #OS_version     :Debian GNU/Linux 7.9 (wheezy)
 #============================================================================
@@ -19,14 +19,68 @@ else
   export TERM='xterm-color'
 fi
 
+function nonzero_return() {
+	RETVAL=$?
+	[ $RETVAL -ne 0 ] && echo "$RETVAL"
+}
+
+# get current branch in git repo
+function parse_git_branch() {
+	BRANCH=`git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/'`
+	if [ ! "${BRANCH}" == "" ]
+	then
+		STAT=`parse_git_dirty`
+		echo "[${BRANCH}${STAT}]"
+	else
+		echo ""
+	fi
+}
+
+# get current status of git repo
+function parse_git_dirty {
+	status=`git status 2>&1 | tee`
+	dirty=`echo -n "${status}" 2> /dev/null | grep "modified:" &> /dev/null; echo "$?"`
+	untracked=`echo -n "${status}" 2> /dev/null | grep "Untracked files" &> /dev/null; echo "$?"`
+	ahead=`echo -n "${status}" 2> /dev/null | grep "Your branch is ahead of" &> /dev/null; echo "$?"`
+	newfile=`echo -n "${status}" 2> /dev/null | grep "new file:" &> /dev/null; echo "$?"`
+	renamed=`echo -n "${status}" 2> /dev/null | grep "renamed:" &> /dev/null; echo "$?"`
+	deleted=`echo -n "${status}" 2> /dev/null | grep "deleted:" &> /dev/null; echo "$?"`
+	bits=''
+	if [ "${renamed}" == "0" ]; then
+		bits=">${bits}"
+	fi
+	if [ "${ahead}" == "0" ]; then
+		bits="*${bits}"
+	fi
+	if [ "${newfile}" == "0" ]; then
+		bits="+${bits}"
+	fi
+	if [ "${untracked}" == "0" ]; then
+		bits="?${bits}"
+	fi
+	if [ "${deleted}" == "0" ]; then
+		bits="x${bits}"
+	fi
+	if [ "${dirty}" == "0" ]; then
+		bits="!${bits}"
+	fi
+	if [ ! "${bits}" == "" ]; then
+		echo " ${bits}"
+	else
+		echo ""
+	fi
+}
+
+
+
 # Adapter le prompt en fonction des permissions de l'utilisateur
 if [[ $(id -u) != 0 ]]
 then
-  #  Custom prompt
-  PS1="\[\e[00;36m\][\T][\u@\h][\w]{\$?}\\$ \[\e[0m\]"
+  #   user prompt
+  export PS1="[\[\e[32;40m\]\A\[\e[m\]]\[\e[34;40m\]\u\[\e[m\]@\[\e[33m\]\h\[\e[m\]\w\`parse_git_branch\`[\[\e[31m\]\`nonzero_return\`\[\e[m\]]\\$ "
 else
-  # Custom prompt
-  PS1="\[\e[00;31m\][\T][\u@\h][\w]{\$?}\$ \[\e[0m\]"
+  # root prompt
+  export PS1="[\[\e[32;40m\]\A\[\e[m\]]\[\e[31;40m\]\u\[\e[m\]@\[\e[31m\]\h\[\e[m\]\w\`parse_git_branch\`[\[\e[31m\]\`nonzero_return\`\[\e[m\]]\\$ "
 fi
 
 #History Size
@@ -54,7 +108,7 @@ export EDITOR="vim"
 # Activation du mode VI de bash
 set -o vi
 
-# Alias 
+# Alias
 alias l='ls -alS $LS_OPTIONS'
 alias maj='apt-get update && apt-get upgrade && apt-get dist-upgrade'
 alias clean='apt-get autoremove && apt-get autoclean'
@@ -113,7 +167,7 @@ div=======================================
     [ "${title: -3}" != '.sh' ] && title=${title}.sh
 
     # Check to see if the file exists already.
-    if [ -e $title ] ; then 
+    if [ -e $title ] ; then
         printf "\n%s\n%s\n\n" "The script \"$title\" already exists." \
         "Please select another title."
         exit 1
